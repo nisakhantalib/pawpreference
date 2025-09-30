@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/nisakhantalib/pawpreference/static/css/main.cc921254.css",
-    "main.js": "/nisakhantalib/pawpreference/static/js/main.6304585c.js",
-    "static/js/453.5d99f4a6.chunk.js": "/nisakhantalib/pawpreference/static/js/453.5d99f4a6.chunk.js",
-    "index.html": "/nisakhantalib/pawpreference/index.html",
-    "main.cc921254.css.map": "/nisakhantalib/pawpreference/static/css/main.cc921254.css.map",
-    "main.6304585c.js.map": "/nisakhantalib/pawpreference/static/js/main.6304585c.js.map",
-    "453.5d99f4a6.chunk.js.map": "/nisakhantalib/pawpreference/static/js/453.5d99f4a6.chunk.js.map"
+    "main.css": "/pawpreference/static/css/main.cc921254.css",
+    "main.js": "/pawpreference/static/js/main.e88608dc.js",
+    "static/js/453.5d99f4a6.chunk.js": "/pawpreference/static/js/453.5d99f4a6.chunk.js",
+    "index.html": "/pawpreference/index.html",
+    "main.cc921254.css.map": "/pawpreference/static/css/main.cc921254.css.map",
+    "main.e88608dc.js.map": "/pawpreference/static/js/main.e88608dc.js.map",
+    "453.5d99f4a6.chunk.js.map": "/pawpreference/static/js/453.5d99f4a6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.cc921254.css",
-    "static/js/main.6304585c.js"
+    "static/js/main.e88608dc.js"
   ]
 }
