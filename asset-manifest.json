@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/nisakhantalib/pawpreference.git/static/css/main.cc921254.css",
-    "main.js": "/nisakhantalib/pawpreference.git/static/js/main.a2ebd4e3.js",
-    "static/js/453.82cdecba.chunk.js": "/nisakhantalib/pawpreference.git/static/js/453.82cdecba.chunk.js",
+    "main.js": "/nisakhantalib/pawpreference.git/static/js/main.fdf4d929.js",
+    "static/js/453.5d99f4a6.chunk.js": "/nisakhantalib/pawpreference.git/static/js/453.5d99f4a6.chunk.js",
     "index.html": "/nisakhantalib/pawpreference.git/index.html",
     "main.cc921254.css.map": "/nisakhantalib/pawpreference.git/static/css/main.cc921254.css.map",
-    "main.a2ebd4e3.js.map": "/nisakhantalib/pawpreference.git/static/js/main.a2ebd4e3.js.map",
-    "453.82cdecba.chunk.js.map": "/nisakhantalib/pawpreference.git/static/js/453.82cdecba.chunk.js.map"
+    "main.fdf4d929.js.map": "/nisakhantalib/pawpreference.git/static/js/main.fdf4d929.js.map",
+    "453.5d99f4a6.chunk.js.map": "/nisakhantalib/pawpreference.git/static/js/453.5d99f4a6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.cc921254.css",
-    "static/js/main.a2ebd4e3.js"
+    "static/js/main.fdf4d929.js"
   ]
 }
