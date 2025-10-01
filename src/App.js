@@ -265,14 +265,6 @@ const Summary = ({ likedCats, dislikedCats, onRestart }) => {
         
         {/* Statistics grid showing like/dislike counts */}
         <div className="grid grid-cols-2 gap-4 mb-8 text-center">
-          {/* Liked cats counter */}
-          <div className="bg-green-100 rounded-xl p-4 md:p-6">
-            <div className="text-4xl md:text-5xl mb-2">♥</div>
-            <p className="text-2xl md:text-3xl font-bold text-green-700">
-              {likedCats.length}
-            </p>
-            <p className="text-sm md:text-base text-gray-600">Cats Liked</p>
-          </div>
           
           {/* Disliked cats counter */}
           <div className="bg-red-100 rounded-xl p-4 md:p-6">
@@ -282,7 +274,18 @@ const Summary = ({ likedCats, dislikedCats, onRestart }) => {
             </p>
             <p className="text-sm md:text-base text-gray-600">Cats Passed</p>
           </div>
-        </div>
+        
+
+        
+          {/* Liked cats counter */}
+          <div className="bg-green-100 rounded-xl p-4 md:p-6">
+            <div className="text-4xl md:text-5xl mb-2">♥</div>
+            <p className="text-2xl md:text-3xl font-bold text-green-700">
+              {likedCats.length}
+            </p>
+            <p className="text-sm md:text-base text-gray-600">Cats Liked</p>
+          </div>
+         </div> 
 
         {/* Gallery of liked cats */}
         <div className="mb-8">
