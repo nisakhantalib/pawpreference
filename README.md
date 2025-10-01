@@ -5,6 +5,8 @@ An interactive web application that allows users to browse random cat photos thr
 ## Overview
 
 This application presents users with 10 random cat photos that can be swiped right to like or left to pass. Upon completion, users can view their preferences and optionally restart with a new set of images.
+![Main Page](https://github.com/nisakhantalib/pawpreference/blob/main/public/main.png)***Main page***
+![Summary Page](https://github.com/nisakhantalib/pawpreference/blob/main/public/summary.png) ***Summary page showing cats liked***
 
 ## Live Demo
 
