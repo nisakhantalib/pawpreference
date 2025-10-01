@@ -15,38 +15,35 @@ const App = () => {
   // Effect hook to load cat data when component first mounts
   // This runs only once on initial render (empty dependency array)
   useEffect(() => {
-    // Only load cats if the array is empty (prevents reloading when returning to tab)
-    if (cats.length === 0 && !showSummary) {
-      async function loadCats() {
-        // Create an array of 10 fetch promises to get cat data from API
-        // Using Array.from to generate multiple async requests simultaneously
-        const promises = Array.from({ length: 10 }, async () => {
-          const res = await fetch("https://cataas.com/cat?json=true");
-          return res.json();
+    async function loadCats() {
+      // Create an array of 10 fetch promises to get cat data from API
+      // Using Array.from to generate multiple async requests simultaneously
+      const promises = Array.from({ length: 10 }, async () => {
+        const res = await fetch("https://cataas.com/cat?json=true");
+        return res.json();
+      });
+      
+      // Wait for all API calls to complete before proceeding
+      const results = await Promise.all(promises);
+      
+      // Preload all images to prevent lag during swiping
+      // This creates an Image object for each cat and waits for it to load
+      // before displaying any cards to the user
+      await Promise.all(results.map(cat => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = resolve;   // Resolve promise when image successfully loads
+          img.onerror = resolve;  // Also resolve on error so one failed image doesn't block everything
+          img.src = `https://cataas.com/cat/${cat.id}`;
         });
-        
-        // Wait for all API calls to complete before proceeding
-        const results = await Promise.all(promises);
-        
-        // Preload all images to prevent lag during swiping
-        // This creates an Image object for each cat and waits for it to load
-        // before displaying any cards to the user
-        await Promise.all(results.map(cat => {
-          return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = resolve;   // Resolve promise when image successfully loads
-            img.onerror = resolve;  // Also resolve on error so one failed image doesn't block everything
-            img.src = `https://cataas.com/cat/${cat.id}`;
-          });
-        }));
-        
-        // Only set cats state after all images are preloaded
-        // This ensures smooth experience with no loading delays
-        setCats(results);
-      }
-      loadCats();
+      }));
+      
+      // Only set cats state after all images are preloaded
+      // This ensures smooth experience with no loading delays
+      setCats(results);
     }
-  }, [cats.length, showSummary]);
+    loadCats();
+  }, []); // Empty array means this only runs once when component mounts
 
   // Handler function called when user swipes a card off screen
   // id: unique identifier of the cat being swiped
@@ -131,15 +128,15 @@ const App = () => {
           }} 
         />
         
-        {/* Centered loading state */}
+        {/* Loading message displayed while fetching cats - centered in the background container */}
         {cats.length === 0 && !showSummary && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-gray-500 text-lg ">Loading adorable cats...</p>
+            <p className="text-gray-500 text-lg animate-pulse">Loading adorable cats...</p>
           </div>
         )}
-
-        {/* Card stack container with fixed dimensions */}
+        
         <div className="relative h-full flex items-center justify-center">
+          {/* Card stack container with fixed dimensions */}
           <div className="relative" style={{ width: '280px', height: '380px' }}>
             {/* Render all cat cards - only top card will be visible due to Card logic */}
             {cats.map((cat) => (
@@ -154,38 +151,40 @@ const App = () => {
         </div>
       </div>
 
-      {/* Action buttons: now clickable and synced with swipe */}
-      <div className="flex gap-6 mt-6">
+      {/* Legend showing swipe actions */}
+      <div className="flex gap-8 mt-6">
         {/* Dislike button */}
         <button
           onClick={() => {
-            if (cats.length > 0) handleCardRemove(cats[cats.length - 1].id, -100);
+            if (cats.length > 0) {
+              const frontCat = cats[cats.length - 1];
+              handleCardRemove(frontCat.id, -100); // negative = pass
+            }
           }}
           disabled={cats.length === 0}
-          className={`flex flex-col items-center ${
-            cats.length === 0 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className="flex flex-col items-center gap-2 disabled:opacity-50"
         >
-          <div className="w-12 h-12 md:w-16 md:h-16 bg-red-500 rounded-full flex items-center justify-center text-white text-xl md:text-2xl shadow-lg">
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-red-500 rounded-full flex items-center justify-center text-white text-xl md:text-2xl shadow-lg hover:bg-red-600 active:scale-90 transition-all">
             ✕
           </div>
-          <p className="text-xs md:text-sm text-gray-600 mt-2">Pass</p>
+          <p className="text-xs md:text-sm text-gray-600">Pass</p>
         </button>
 
         {/* Like button */}
         <button
           onClick={() => {
-            if (cats.length > 0) handleCardRemove(cats[cats.length - 1].id, 100);
+            if (cats.length > 0) {
+              const frontCat = cats[cats.length - 1];
+              handleCardRemove(frontCat.id, 100); // positive = like
+            }
           }}
           disabled={cats.length === 0}
-          className={`flex flex-col items-center ${
-            cats.length === 0 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className="flex flex-col items-center gap-2 disabled:opacity-50"
         >
-          <div className="w-12 h-12 md:w-16 md:h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-xl md:text-2xl shadow-lg">
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-xl md:text-2xl shadow-lg hover:bg-green-600 active:scale-90 transition-all">
             ♥
           </div>
-          <p className="text-xs md:text-sm text-gray-600 mt-2">Like</p>
+          <p className="text-xs md:text-sm text-gray-600">Like</p>
         </button>
       </div>
     </div>
@@ -200,22 +199,30 @@ const Card = ({ cat, cards, onRemove }) => {
   const x = useMotionValue(0);
   
   // Transform x position into rotation angle
+  // When dragged left (-150px) card rotates -18deg, right (+150px) rotates +18deg
   const rotate = useTransform(x, [-150, 150], [-18, 18]);
   
   // Transform x position into opacity for fade effect
+  // Card fades out as it's dragged away from center
   const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
 
   // Only render the top card in the stack
+  // Cards are rendered in order, but only last one should be visible and interactive
   const isFront = cat.id === cards[cards.length - 1].id;
 
   // Called when user stops dragging the card
   const handleDragEnd = () => {
     const xValue = x.get();
+    
+    // If dragged more than 50px in either direction, remove the card
+    // Positive value = liked, negative = disliked
     if (Math.abs(xValue) > 50) {
       onRemove(cat.id, xValue);
     }
+    // If dragged less than 50px, card will snap back to center (handled by framer-motion)
   };
 
+  // Don't render cards that aren't on top
   if (!isFront) return null;
 
   // Animated image card with drag functionality
@@ -231,9 +238,13 @@ const Card = ({ cat, cards, onRemove }) => {
         x, // Bind horizontal position
         opacity, // Bind opacity transform
         rotate, // Bind rotation transform
+        transition: '0.125s transform' // Smooth spring-back animation
       }}
+      // Initial animation when card appears
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      // Enable horizontal dragging only
       drag="x"
       dragConstraints={false}
       onDragEnd={handleDragEnd}
@@ -254,6 +265,7 @@ const Summary = ({ likedCats, dislikedCats, onRestart }) => {
         
         {/* Statistics grid showing like/dislike counts */}
         <div className="grid grid-cols-2 gap-4 mb-8 text-center">
+          {/* Liked cats counter */}
           <div className="bg-green-100 rounded-xl p-4 md:p-6">
             <div className="text-4xl md:text-5xl mb-2">♥</div>
             <p className="text-2xl md:text-3xl font-bold text-green-700">
@@ -262,6 +274,7 @@ const Summary = ({ likedCats, dislikedCats, onRestart }) => {
             <p className="text-sm md:text-base text-gray-600">Cats Liked</p>
           </div>
           
+          {/* Disliked cats counter */}
           <div className="bg-red-100 rounded-xl p-4 md:p-6">
             <div className="text-4xl md:text-5xl mb-2">✕</div>
             <p className="text-2xl md:text-3xl font-bold text-red-700">
@@ -277,7 +290,9 @@ const Summary = ({ likedCats, dislikedCats, onRestart }) => {
             <span className="text-green-500">♥</span> Your Favorite Cats
           </h2>
           
+          {/* Conditional rendering based on whether user liked any cats */}
           {likedCats.length > 0 ? (
+            // Grid layout displaying all liked cat images
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
               {likedCats.map((cat) => (
                 <div key={cat.id} className="aspect-square overflow-hidden rounded-lg shadow-md">
@@ -290,11 +305,12 @@ const Summary = ({ likedCats, dislikedCats, onRestart }) => {
               ))}
             </div>
           ) : (
+            // Empty state message if no cats were liked
             <p className="text-gray-500 text-center py-8">No cats liked yet</p>
           )}
         </div>
 
-        {/* Restart button */}
+        {/* Restart button to begin new session */}
         <button
           onClick={onRestart}
           className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 md:py-4 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg text-sm md:text-base"
